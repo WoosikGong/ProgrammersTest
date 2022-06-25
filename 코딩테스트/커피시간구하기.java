@@ -1,0 +1,46 @@
+public int[] solution(int N, int[] coffee_times) {
+    int[] answer = new int[coffee_times.length];
+    int coffeeNum = coffee_times.length;
+    int index = 0;
+    int time = 0;
+
+    HashMap<Integer, Queue<Integer>> map = new HashMap<>();
+    PriorityQueue<Integer> binQueue = new PriorityQueue<>();
+    List<Integer> ans = new ArrayList<>();
+
+
+    while(ans.size() < coffee_times.length){
+        if(binQueue.size() < coffee_times.length){
+            int temp = (coffeeNum > N) ? N : coffeeNum;
+            coffeeNum-=N;
+            for(int i=0;i<temp;i++){
+                Queue<Integer> queue;
+                if(map.get(coffee_times[index] + time) == null) {
+                    map.put(coffee_times[index] + time, new LinkedList<Integer>());
+                }
+                queue = map.get(coffee_times[index] + time);
+                binQueue.add(coffee_times[index] + time);
+                queue.add(index++ + 1);
+            }
+        }
+
+        int min = binQueue.poll();
+        while(true){
+            Queue<Integer> queue = map.get(min);
+            ans.add(queue.poll());
+            if(binQueue.size() > 0 && min != binQueue.peek()) {
+                map.remove(min);
+                break;
+            }
+
+            if(binQueue.size() > 0) min = binQueue.poll();
+            else break;
+        }
+        time+=min;
+    }
+
+    for(int i=0;i<ans.size();i++) answer[i] = ans.get(i);
+
+
+    return answer;
+}
